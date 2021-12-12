@@ -1,5 +1,4 @@
-package com.example.demo.DonHang;
-
+package com.example.demo.OrderStatus;
 import com.example.demo.User.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -18,20 +18,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "orders")
-public class OrderEntity {
-    private String id;
-    private Date orderDate;
-    private Date deliveryDate;
-    private float total;
-//    @DBRef
-    private List<ProductEntity> products;
-    //Chờ xác nhận
-    //Chờ lấy hàng
-    //Đang giao
-    //Đã giao
-    //Đã hủy
-    private String currentStatus;
-//    @DBRef
-    private String userID;
+@Document(collection = "orders_status_history")
+
+public class StatusHistory {
+    private String orderID;
+    private String statusName;
+    private LocalDateTime createdDate;
 }

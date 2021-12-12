@@ -30,11 +30,11 @@ public class NhanVienController {
     public ResponseEntity<?> putNhanVien(@PathVariable("_id") String _id, @RequestBody NhanVienEntity newNhanvien){
         Optional<NhanVienEntity> nhanvien = nhanvienRepository.findById(_id);
         if(nhanvien.isPresent()){
+
             NhanVienEntity resNhanvien = nhanvien.get();
             resNhanvien.setHoten(newNhanvien.getHoten());
             resNhanvien.setSoNamKinhNghiem(newNhanvien.getSoNamKinhNghiem());
             resNhanvien.setThuviec(newNhanvien.getThuViec());
-
             return new ResponseEntity<NhanVienEntity>(nhanvienRepository.save(resNhanvien), HttpStatus.OK);
         }
         else

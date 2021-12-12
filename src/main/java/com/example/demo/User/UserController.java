@@ -2,22 +2,16 @@ package com.example.demo.User;
 
 import com.example.demo.DonHang.OrderEntity;
 import com.example.demo.DonHang.OrderRepository;
-import com.example.demo.NhanVien.NhanVienEntity;
-import com.mongodb.BasicDBObject;
+import com.example.demo.OrderStatus.StatusHistory;
+import com.example.demo.OrderStatus.StatusRepository;
+import com.example.demo.OrderStatus.UpdateStatusInput;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/users")
@@ -28,34 +22,89 @@ public class UserController {
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    StatusRepository statusRepository;
+
 
     @GetMapping("/{userId}/orders")
-    public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") String userID){
-//        return new ResponseEntity<String>(userID, HttpStatus.OK);
-//        Criteria toolQuery = Criteria.where("userID").in(userID);
-//        BasicDBObject criteria = new BasicDBObject();
-//        criteria.append("userID", userID);
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("userID").in(userID));
+    public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") String userID) {
+        List<OrderEntity> orders = orderRepository.findByUserID(userID);
 
-        List<OrderEntity> orders =  orderRepository.findByUserID(userID);
-
-//        MatchOperation toolMatchOperation = new MatchOperation(toolQuery);
-//        LookupOperation lookupOperation = LookupOperation.newLookup().
-//                from("users").
-//                localField("users._id").
-//                foreignField("orders.id").
-//                as("usedIn.car");
-
-//        TypedAggregation<OrderEntity> aggregation = Aggregation.newAggregation(OrderEntity.class, toolMatchOperation, Aggregation.unwind("usedIn"), lookupOperation, Aggregation.unwind("usedIn.car"),
-//                Aggregation.group("id").push("usedIn").as("usedIn"));
-
-        if(orders.size() > 0)
+        if (orders.size() > 0)
             return new ResponseEntity<List<OrderEntity>>(orders, HttpStatus.OK);
         else
             return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
     }
+
+
+    @PutMapping ("/{userID}/orders/{orderID}/status")
+    public ResponseEntity<?> UpdateStatus (@PathVariable  String orderID,
+                                           @RequestBody UpdateStatusInput status)
+    {
+//        return new ResponseEntity<Boolean>(status.getName() =="Đã hủy", HttpStatus.OK);
+        List<String> validStatus = Arrays.asList(
+                "Chờ xác nhận",
+                "Đang chuẩn bị hàng",
+                "Chờ lấy hàng",
+                "Đang giao",
+                "Đã giao",
+                "Đã hủy");
+
+        Boolean contains = validStatus.contains(status.getName());
+        if (contains == false) {
+            return new ResponseEntity<String>("Invalid Status Name", HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<OrderEntity> order = orderRepository.findById(orderID);
+
+        if (order.isPresent()) {
+            OrderEntity resOrder = order.get();
+            String currentStatus = resOrder.getCurrentStatus();
+            Boolean flag = false;
+
+            //Hủy đơn hàng
+            if (Objects.equals(status.getName(), new String("Đã hủy"))) {
+                List<String> cancelStatus = Arrays.asList(
+                        "Chờ xác nhận",
+                        "Đang chuẩn bị hàng");
+
+                flag = cancelStatus.contains(currentStatus);
+                if (flag == true) {
+
+                    StatusHistory history = new StatusHistory();
+
+                    history.setOrderID(orderID);
+                    history.setStatusName(status.getName());
+                    history.setCreatedDate(LocalDateTime.now());
+                    statusRepository.save(history);
+                    //Insert new status into status history table
+
+                    //Update status in order table
+                    resOrder.setCurrentStatus(status.getName());
+                    orderRepository.save(resOrder);
+
+                    return new ResponseEntity<OrderEntity>(resOrder, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<String>("Can't cancel", HttpStatus.BAD_REQUEST);
+                }
+            }
+            else {
+                return new ResponseEntity<String>("Another status", HttpStatus.BAD_REQUEST);
+                //Chức năng khác, cập nhật sau
+            }
+        } else {
+            return new ResponseEntity<String>("Not Found id: " + orderID, HttpStatus.NOT_FOUND);
+        }
+    }
 }
+
+
+
+
+//    @DeleteMapping ("/{userID}/order/{orderID}/cancel")
+//    public ResponseEntity <?>
+
+
 
 //    @GetMapping("")
 //    public ResponseEntity<?> getListUser(){

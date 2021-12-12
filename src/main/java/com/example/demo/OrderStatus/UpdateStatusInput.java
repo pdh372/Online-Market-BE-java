@@ -1,4 +1,4 @@
-package com.example.demo.DonHang;
+package com.example.demo.OrderStatus;
 
 import com.example.demo.User.UserEntity;
 import lombok.AllArgsConstructor;
@@ -18,20 +18,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "orders")
-public class OrderEntity {
-    private String id;
-    private Date orderDate;
-    private Date deliveryDate;
-    private float total;
-//    @DBRef
-    private List<ProductEntity> products;
-    //Chờ xác nhận
-    //Chờ lấy hàng
-    //Đang giao
-    //Đã giao
-    //Đã hủy
-    private String currentStatus;
-//    @DBRef
-    private String userID;
+public class UpdateStatusInput {
+    private String name;
 }
