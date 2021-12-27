@@ -88,6 +88,30 @@ public class UserController {
                     return new ResponseEntity<String>("Can't cancel", HttpStatus.BAD_REQUEST);
                 }
             }
+
+            //Nhận đơn hàng
+            else if(Objects.equals(status.getName(), new String("Đang giao")))
+            {
+                if(Objects.equals(currentStatus, new String("Chờ lấy hàng")))
+                {
+                    StatusHistory history = new StatusHistory();
+
+                    //Insert new status into status history table
+                    history.setOrderID(orderID);
+                    history.setStatusName(status.getName());
+                    history.setCreatedDate(LocalDateTime.now());
+                    statusRepository.save(history);
+
+                    //Update status in order table
+                    resOrder.setCurrentStatus(status.getName());
+                    orderRepository.save(resOrder);
+
+                    return new ResponseEntity<OrderEntity>(resOrder, HttpStatus.OK);
+                }
+                else{
+                    return new ResponseEntity<String>("Can't ship order", HttpStatus.BAD_REQUEST);
+                }
+            }
             else {
                 return new ResponseEntity<String>("Another status", HttpStatus.BAD_REQUEST);
                 //Chức năng khác, cập nhật sau
