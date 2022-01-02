@@ -20,18 +20,17 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection = "orders")
 public class OrderEntity {
-    private String id;
-    private Date orderDate;
-    private Date deliveryDate;
+    private String userId;
+    private String orderDate;
+    private String deliveryDate;
     private float total;
-//    @DBRef
     private List<ProductEntity> products;
     //Chờ xác nhận
     //Chờ lấy hàng
     //Đang giao
     //Đã giao
     //Đã hủy
+    private String shippingfee;
+    private String updatedtime;
     private String currentStatus;
-//    @DBRef
-    private String userID;
 }

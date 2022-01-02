@@ -1,30 +1,36 @@
 package com.example.demo.DonHang;
-import com.example.demo.NhanVien.NhanVienEntity;
-import com.example.demo.NhanVien.NhanVienRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
-
+@CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
     @Autowired
     OrderRepository orderRepository;
 
-//    @GetMapping("")
-//    public ResponseEntity<?> getOrderByUser(String orderID){
-//
-//        List<NhanVienEntity> nhanViens =  nhanvienRepository.findAll();
-//
-//        if(nhanViens.size() > 0)
-//            return new ResponseEntity<List<NhanVienEntity>>(nhanViens, HttpStatus.OK);
-//        else
-//            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
-//    }
+    @GetMapping("filterByStatusAndUserId")
+    public ResponseEntity<?> getUsers(HttpServletRequest request){
+        try {
+            String status = request.getParameter("status");
+            String userId = request.getParameter("userId");
+
+            List<OrderEntity> orders;
+            if(status == null){
+                orders = orderRepository.findByUserId(new ObjectId(userId));
+            }
+            else {
+                orders = orderRepository.findByCurrentStatusAndUserId(status, new ObjectId(userId));
+            }
+
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
