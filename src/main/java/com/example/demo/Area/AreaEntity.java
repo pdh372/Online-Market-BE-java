@@ -1,10 +1,9 @@
-package com.example.demo.Address;
-
-import com.example.demo.Area.AreaEntity;
+package com.example.demo.Area;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -14,7 +13,12 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressEntity {
-    private String area;
-    private String streetNo;
+@Document(collection = "area")
+public class AreaEntity {
+    private ObjectId _id;
+    private String city;
+    private String district;
+    private String ward;
+    private String levelCode;
+    private String levelName;
 }

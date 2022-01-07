@@ -1,10 +1,13 @@
 package com.example.demo.User;
 
+import com.example.demo.Area.AreaEntity;
+import com.example.demo.Area.AreaRepository;
 import com.example.demo.DonHang.OrderEntity;
 import com.example.demo.DonHang.OrderRepository;
 import com.example.demo.OrderStatus.StatusHistory;
 import com.example.demo.OrderStatus.StatusRepository;
 import com.example.demo.OrderStatus.UpdateStatusInput;
+import com.example.demo.Shipper.ShipperRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     UserRepository userRepository;
@@ -24,6 +27,12 @@ public class UserController {
 
     @Autowired
     StatusRepository statusRepository;
+
+    @Autowired
+    ShipperRepository shipperRepository;
+
+    @Autowired
+    AreaRepository areaRepository;
 
 
     @GetMapping("/{userId}/orders")
@@ -95,7 +104,9 @@ public class UserController {
         } else {
             return new ResponseEntity<String>("Not Found id: " + orderID, HttpStatus.NOT_FOUND);
         }
+
     }
+
 }
 
 
