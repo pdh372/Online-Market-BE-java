@@ -8,6 +8,7 @@ import com.example.demo.OrderStatus.StatusHistory;
 import com.example.demo.OrderStatus.StatusRepository;
 import com.example.demo.OrderStatus.UpdateStatusInput;
 import com.example.demo.Shipper.ShipperRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,8 @@ public class UserController {
 
 
     @GetMapping("/{userId}/orders")
-    public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") String userID) {
-        List<OrderEntity> orders = orderRepository.findByUserID(userID);
+    public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") String userId) {
+        List<OrderEntity> orders = orderRepository.findByUserId(new ObjectId(userId));
 
         if (orders.size() > 0)
             return new ResponseEntity<List<OrderEntity>>(orders, HttpStatus.OK);
@@ -50,14 +51,13 @@ public class UserController {
     public ResponseEntity<?> UpdateStatus (@PathVariable  String orderID,
                                            @RequestBody UpdateStatusInput status)
     {
-//        return new ResponseEntity<Boolean>(status.getName() =="Đã hủy", HttpStatus.OK);
         List<String> validStatus = Arrays.asList(
-                "Chờ xác nhận",
-                "Đang chuẩn bị hàng",
-                "Chờ lấy hàng",
-                "Đang giao",
-                "Đã giao",
-                "Đã hủy");
+                "comfirming",
+                "preparing",
+                "waiting-shipper",
+                "delivering",
+                "paid",
+                "canceled");
 
         Boolean contains = validStatus.contains(status.getName());
         if (contains == false) {
@@ -72,10 +72,10 @@ public class UserController {
             Boolean flag = false;
 
             //Hủy đơn hàng
-            if (Objects.equals(status.getName(), new String("Đã hủy"))) {
+            if (Objects.equals(status.getName(), new String("canceled"))) {
                 List<String> cancelStatus = Arrays.asList(
-                        "Chờ xác nhận",
-                        "Đang chuẩn bị hàng");
+                        "comfirming",
+                        "preparing");
 
                 flag = cancelStatus.contains(currentStatus);
                 if (flag == true) {
@@ -97,9 +97,31 @@ public class UserController {
                     return new ResponseEntity<String>("Can't cancel", HttpStatus.BAD_REQUEST);
                 }
             }
+
+            else if(Objects.equals(status.getName(), new String("delivering")))
+            {
+                if(Objects.equals(currentStatus, new String("waiting-shipper")))
+                {
+                    StatusHistory history = new StatusHistory();
+
+                    //Insert new status into status history table
+                    history.setOrderID(orderID);
+                    history.setStatusName(status.getName());
+                    history.setCreatedDate(LocalDateTime.now());
+                    statusRepository.save(history);
+
+                    //Update status in order table
+                    resOrder.setCurrentStatus(status.getName());
+                    orderRepository.save(resOrder);
+
+                    return new ResponseEntity<OrderEntity>(resOrder, HttpStatus.OK);
+                }
+                else{
+                    return new ResponseEntity<String>("Can't ship order", HttpStatus.BAD_REQUEST);
+                }
+            }
             else {
                 return new ResponseEntity<String>("Another status", HttpStatus.BAD_REQUEST);
-                //Chức năng khác, cập nhật sau
             }
         } else {
             return new ResponseEntity<String>("Not Found id: " + orderID, HttpStatus.NOT_FOUND);
@@ -108,36 +130,6 @@ public class UserController {
     }
 
 }
-
-
-
-
-//    @DeleteMapping ("/{userID}/order/{orderID}/cancel")
-//    public ResponseEntity <?>
-
-
-
-//    @GetMapping("")
-//    public ResponseEntity<?> getListUser(){
-////        List<UserEntity> users = UserService.getListUser();
-////        System.out.print(users);
-//        List<UserEntity> users =  userRepository.findAll();
-////        return ResponseEntity.ok(users);
-//        if(users.size() > 0)
-//            return new ResponseEntity<List<UserEntity>>(users, HttpStatus.OK);
-//        else
-//            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> getUser(@PathVariable String id, @RequestParam(required = false) String test){
-//        Optional<UserEntity> userOptional =  userRepository.findById(id);
-//        if(userOptional.isPresent())
-//            return new ResponseEntity<UserEntity>(userOptional.get(), HttpStatus.OK);
-//        else
-//            return new ResponseEntity<>("Not Found id: " + id, HttpStatus.NOT_FOUND);
-//
-//    }
 
 
 

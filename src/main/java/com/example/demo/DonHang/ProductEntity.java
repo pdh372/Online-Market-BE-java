@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class ProductEntity {
 
-    private String product_ID;
+    private String productId;
     private  int quantity;
     private float unitPrice;
 }
