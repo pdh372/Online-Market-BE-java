@@ -1,10 +1,13 @@
 package com.example.demo.User;
 
+import com.example.demo.Area.AreaRepository;
 import com.example.demo.DonHang.OrderEntity;
 import com.example.demo.DonHang.OrderRepository;
+import com.example.demo.ImgCI.ImgCIRepository;
 import com.example.demo.OrderStatus.StatusHistory;
 import com.example.demo.OrderStatus.StatusRepository;
 import com.example.demo.OrderStatus.UpdateStatusInput;
+import com.example.demo.Shipper.ShipperRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +18,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
+<<<<<<< HEAD
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/users")
+=======
+@CrossOrigin
+@RequestMapping("/api/users")
+>>>>>>> 514d6491e39bf8cb509aeee194bdf7b110e488d5
 public class UserController {
     @Autowired
     UserRepository userRepository;
@@ -26,6 +34,15 @@ public class UserController {
 
     @Autowired
     StatusRepository statusRepository;
+
+    @Autowired
+    ShipperRepository shipperRepository;
+
+    @Autowired
+    AreaRepository areaRepository;
+
+    @Autowired
+    ImgCIRepository imgCIRepository;
 
 
     @GetMapping("/{userId}/orders")
@@ -51,8 +68,8 @@ public class UserController {
                 "paid",
                 "canceled");
 
-        Boolean contains = validStatus.contains(status.getName());
-        if (contains == false) {
+        boolean contains = validStatus.contains(status.getName());
+        if (!contains) {
             return new ResponseEntity<String>("Invalid Status Name", HttpStatus.BAD_REQUEST);
         }
 
@@ -61,7 +78,7 @@ public class UserController {
         if (order.isPresent()) {
             OrderEntity resOrder = order.get();
             String currentStatus = resOrder.getCurrentStatus();
-            Boolean flag = false;
+            boolean flag = false;
 
             //Hủy đơn hàng
             if (Objects.equals(status.getName(), new String("canceled"))) {
@@ -70,7 +87,7 @@ public class UserController {
                         "preparing");
 
                 flag = cancelStatus.contains(currentStatus);
-                if (flag == true) {
+                if (flag) {
 
                     StatusHistory history = new StatusHistory();
 
@@ -117,7 +134,9 @@ public class UserController {
         } else {
             return new ResponseEntity<String>("Not Found id: " + orderID, HttpStatus.NOT_FOUND);
         }
+
     }
+
 }
 
 
