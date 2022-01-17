@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/users")
 public class UserController {
     @Autowired
@@ -43,7 +44,7 @@ public class UserController {
                                            @RequestBody UpdateStatusInput status)
     {
         List<String> validStatus = Arrays.asList(
-                "comfirming",
+                "confirming",
                 "preparing",
                 "waiting-shipper",
                 "delivering",
@@ -65,7 +66,7 @@ public class UserController {
             //Hủy đơn hàng
             if (Objects.equals(status.getName(), new String("canceled"))) {
                 List<String> cancelStatus = Arrays.asList(
-                        "comfirming",
+                        "confirming",
                         "preparing");
 
                 flag = cancelStatus.contains(currentStatus);
@@ -81,9 +82,8 @@ public class UserController {
 
                     //Update status in order table
                     resOrder.setCurrentStatus(status.getName());
-                    orderRepository.save(resOrder);
 
-                    return new ResponseEntity<OrderEntity>(resOrder, HttpStatus.OK);
+                    return new ResponseEntity<OrderEntity>(orderRepository.save(resOrder), HttpStatus.OK);
                 } else {
                     return new ResponseEntity<String>("Can't cancel", HttpStatus.BAD_REQUEST);
                 }
