@@ -18,13 +18,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-<<<<<<< HEAD
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/users")
-=======
-@CrossOrigin
-@RequestMapping("/api/users")
->>>>>>> 514d6491e39bf8cb509aeee194bdf7b110e488d5
 public class UserController {
     @Autowired
     UserRepository userRepository;
