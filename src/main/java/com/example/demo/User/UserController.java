@@ -1,9 +1,9 @@
 package com.example.demo.User;
 
-import com.example.demo.Area.AreaEntity;
 import com.example.demo.Area.AreaRepository;
 import com.example.demo.DonHang.OrderEntity;
 import com.example.demo.DonHang.OrderRepository;
+import com.example.demo.ImgCI.ImgCIRepository;
 import com.example.demo.OrderStatus.StatusHistory;
 import com.example.demo.OrderStatus.StatusRepository;
 import com.example.demo.OrderStatus.UpdateStatusInput;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     AreaRepository areaRepository;
+
+    @Autowired
+    ImgCIRepository imgCIRepository;
 
 
     @GetMapping("/{userId}/orders")
@@ -59,8 +63,8 @@ public class UserController {
                 "paid",
                 "canceled");
 
-        Boolean contains = validStatus.contains(status.getName());
-        if (contains == false) {
+        boolean contains = validStatus.contains(status.getName());
+        if (!contains) {
             return new ResponseEntity<String>("Invalid Status Name", HttpStatus.BAD_REQUEST);
         }
 
@@ -69,7 +73,7 @@ public class UserController {
         if (order.isPresent()) {
             OrderEntity resOrder = order.get();
             String currentStatus = resOrder.getCurrentStatus();
-            Boolean flag = false;
+            boolean flag = false;
 
             //Hủy đơn hàng
             if (Objects.equals(status.getName(), new String("canceled"))) {
@@ -78,7 +82,7 @@ public class UserController {
                         "preparing");
 
                 flag = cancelStatus.contains(currentStatus);
-                if (flag == true) {
+                if (flag) {
 
                     StatusHistory history = new StatusHistory();
 
