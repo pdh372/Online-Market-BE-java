@@ -1,7 +1,7 @@
 //package com.example.demo.Request;
 //
 //import com.example.demo.Area.AreaEntity;
-//import com.example.demo.ImgCI.ImgCIEntity;
+//import com.example.demo.User.ImgCIEntity;
 //import com.example.demo.ImgLicense.ImgLicenseEntity;
 //import com.example.demo.Shipper.ShipperEntity;
 //import com.example.demo.User.UserEntity;
@@ -25,7 +25,7 @@
 package com.example.demo.Request;
 
 import com.example.demo.Area.AreaEntity;
-import com.example.demo.ImgCI.ImgCIEntity;
+import com.example.demo.User.ImgCIEntity;
 import com.example.demo.ImgLicense.ImgLicenseEntity;
 import com.example.demo.Shipper.ShipperEntity;
 import com.example.demo.User.UserEntity;

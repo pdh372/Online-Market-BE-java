@@ -1,4 +1,4 @@
-package com.example.demo.ImgCI;
+package com.example.demo.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
