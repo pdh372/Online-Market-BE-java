@@ -2,7 +2,7 @@ package com.example.demo.Shipper;
 
 import com.example.demo.Area.AreaEntity;
 import com.example.demo.Area.AreaRepository;
-import com.example.demo.ImgCI.ImgCIEntity;
+import com.example.demo.User.ImgCIEntity;
 import com.example.demo.ImgLicense.ImgLicenseEntity;
 import com.example.demo.Product.ProductEntity;
 import com.example.demo.Product.ProductRepository;
@@ -15,7 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -33,14 +37,22 @@ public class ShipperController {
     @Autowired
     ProductRepository productRepository;
 
-    @GetMapping("")
-    public ResponseEntity<?> getProducts(){
-        List<ProductEntity> products =  productRepository.findAll();
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getShippersByStatusRegister(@PathVariable("userId")  String userId){
+        Optional<UserEntity> user =  userRepository.findById(userId);
 
-        if(products.size() > 0)
-            return new ResponseEntity<>(products, HttpStatus.OK);
+        List<ShipperEntity> shippers = shipperRepository.findByOwner(userId);
+
+        RegisterShipperRequestEntity temp = new RegisterShipperRequestEntity();
+
+        if(shippers.size() == 1 && user.isPresent()) {
+            temp.setShipper(shippers.get(0));
+            temp.setUser(user.get());
+            return new ResponseEntity<>(temp, HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+
     }
 
     @PostMapping("/registershipper")
@@ -69,8 +81,8 @@ public class ShipperController {
                     user.getAddress().setArea(address.toString());
                     userRepository.save(user);
 
-                    ObjectId owner = userRepository.findByEmail(user.getEmail()).get(0).get_id();
-                    shipper.setOwner(owner.toString());
+                    String owner = userRepository.findByEmail(user.getEmail()).get(0).get_id();
+                    shipper.setOwner(owner);
 
                     shipperRepository.save(shipper);
 

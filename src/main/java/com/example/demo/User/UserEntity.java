@@ -1,7 +1,6 @@
 package com.example.demo.User;
 
-import com.example.demo.Address.AddressEntity;
-import com.example.demo.ImgCI.ImgCIEntity;
+import com.example.demo.Area.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document(collection = "user")
 public class UserEntity {
-    private ObjectId _id;
+    private String _id;
     private String name;
     private String ciNum;
     private String email;
@@ -27,6 +26,7 @@ public class UserEntity {
     private String password;
     private String role;
     private String status;
-    //private String bankAccount;
-    //private float wallet;
+    private String bankAccount;
+    private float wallet;
+    private String registerDate;
 }

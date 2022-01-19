@@ -3,7 +3,7 @@ package com.example.demo.User;
 import com.example.demo.Area.AreaRepository;
 import com.example.demo.DonHang.OrderEntity;
 import com.example.demo.DonHang.OrderRepository;
-import com.example.demo.ImgCI.ImgCIRepository;
+import com.example.demo.User.ImgCIEntity;
 import com.example.demo.OrderStatus.StatusHistory;
 import com.example.demo.OrderStatus.StatusRepository;
 import com.example.demo.OrderStatus.UpdateStatusInput;
@@ -36,9 +36,44 @@ public class UserController {
     @Autowired
     AreaRepository areaRepository;
 
-    @Autowired
-    ImgCIRepository imgCIRepository;
+    @GetMapping("/{role}/statusregister/{status}")
+    public ResponseEntity<?> getUserByRoleAndStatus(@PathVariable("role") String role,
+                                             @PathVariable("status") String status) {
+        List<UserEntity> users = userRepository.findUserEntitiesByRoleAndStatus(role, status);
 
+        if (users.size() > 0)
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/shipperpending")
+    public ResponseEntity<?> getShipperPending() {
+        List<UserEntity> users = userRepository.findUserEntitiesByRoleAndStatus("shipper", "pending");
+
+        if (users.size() > 0)
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/activeuser")
+    public ResponseEntity<?> activeUser(@RequestBody UserEntity shipper) {
+        try{
+            Optional<UserEntity> user = userRepository.findById(shipper.get_id());
+
+            if (user.isPresent()) {
+                user.get().setStatus("active");
+                userRepository.save(user.get());
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+            else
+                return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") String userId) {
