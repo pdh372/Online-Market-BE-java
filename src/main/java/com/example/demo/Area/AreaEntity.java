@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Document(collection = "area")
 public class AreaEntity {
-    private ObjectId _id;
+    private String _id;
     private String city;
     private String district;
     private String ward;

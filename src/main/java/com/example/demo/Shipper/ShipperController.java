@@ -75,8 +75,7 @@ public class ShipperController {
                     return new ResponseEntity<>("Invalid address. Please check again.", HttpStatus.BAD_REQUEST);
                 }
                 else {
-                    ObjectId address = city.get(0).get_id();
-                    user.getAddress().setArea(address.toString());
+                    user.getAddress().setArea(city.get(0).get_id());
                     userRepository.save(user);
 
                     String owner = userRepository.findByEmail(user.getEmail()).get(0).get_id();
