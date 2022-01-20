@@ -1,11 +1,11 @@
 package com.example.demo.Statistical;
 
 
+import com.example.demo.Area.AreaEntity;
+import com.example.demo.Area.AreaRepository;
 import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,19 +20,18 @@ public class StatisticalController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("buyer")
-    public ResponseEntity<List<UserEntity>> getdata(){
-        Query query = new Query();
+    @Autowired
+    AreaRepository areaRepository;
 
-        query.addCriteria(Criteria.where("color").is("ahihi"));
+    @GetMapping("users")
+    public ResponseEntity<StatisticEntity> getdata(){
 
-        List<UserEntity> amount = userRepository.findAll();
+        List<UserEntity> users = userRepository.findAll();
 
-        StatisticEntity statisticEntity = new StatisticEntity();
+        List<AreaEntity> areas =  areaRepository.findAll();
 
+        StatisticEntity statisticEntity = new StatisticEntity(users, areas);
 
-        statisticEntity.setName("ahihi");
-
-        return new ResponseEntity<List<UserEntity>>(amount, HttpStatus.OK);
+        return new ResponseEntity<StatisticEntity>(statisticEntity, HttpStatus.OK);
     }
 }
