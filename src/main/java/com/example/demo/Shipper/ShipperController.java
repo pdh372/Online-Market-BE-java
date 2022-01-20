@@ -4,7 +4,6 @@ import com.example.demo.Area.AreaEntity;
 import com.example.demo.Area.AreaRepository;
 import com.example.demo.User.ImgCIEntity;
 import com.example.demo.ImgLicense.ImgLicenseEntity;
-import com.example.demo.Product.ProductEntity;
 import com.example.demo.Product.ProductRepository;
 import com.example.demo.Request.RegisterShipperRequestEntity;
 import com.example.demo.User.UserEntity;
@@ -15,9 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +42,10 @@ public class ShipperController {
         RegisterShipperRequestEntity temp = new RegisterShipperRequestEntity();
 
         if(shippers.size() == 1 && user.isPresent()) {
+            Optional<AreaEntity> area = areaRepository.findById(user.get().getAddress().getArea());
             temp.setShipper(shippers.get(0));
             temp.setUser(user.get());
+            area.ifPresent(temp::setArea);
             return new ResponseEntity<>(temp, HttpStatus.OK);
         }
         else
