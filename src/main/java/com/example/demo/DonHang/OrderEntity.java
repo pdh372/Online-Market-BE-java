@@ -28,7 +28,13 @@ public class OrderEntity {
     private String deliveryDate;
     private float total;
     private List<ProductEntity> products;
-    private String shippingfee;
-    private String updatedtime;
     private String currentStatus;
+    private String shipper;
+    private String provider;
+    private float orderFee;
+    private float shippingFee;
+    private float shipperFee;
+    private float providerFee;
+    private String status;
+    private String updateTime;
 }

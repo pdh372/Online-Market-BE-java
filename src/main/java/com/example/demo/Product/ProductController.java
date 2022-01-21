@@ -1,4 +1,6 @@
 package com.example.demo.Product;
+import com.example.demo.Store.StoreEntity;
+import com.example.demo.Store.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,9 @@ import java.util.Optional;
 public class ProductController {
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    StoreRepository storeRepository;
 
     @GetMapping("")
     public ResponseEntity<?> getProducts(){
@@ -40,8 +45,13 @@ public class ProductController {
     public ResponseEntity<?> getProduct(@PathVariable("productId") String productId){
         Optional<ProductEntity> product =  productRepository.findById(productId);
 
-        if(product.isPresent())
-            return new ResponseEntity<>(product, HttpStatus.OK);
+        ProductStoreRequestEntity temp = new ProductStoreRequestEntity();
+        if(product.isPresent()) {
+            Optional<StoreEntity> store = storeRepository.findById(product.get().getStore());
+            temp.setProduct(product.get());
+            store.ifPresent(temp::setStore);
+            return new ResponseEntity<>(temp, HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
     }
