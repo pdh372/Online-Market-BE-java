@@ -62,14 +62,26 @@ public class OrderController {
             return new ResponseEntity<>("ProductId does not exists", HttpStatus.NOT_FOUND);
         }
 
+        var currentStatus = "preparing";
 
-        newOrder.getProducts().add(orderProductInfo);
+       float orderFee = orderProductInfo.getQuantity() * orderProductInfo.getUnitPrice();
+       float shippingFee = 15000;
+
+       float total = orderFee + shippingFee;
+
+       float providerFee = orderFee * (float)0.95;
+       float shipperFee = shippingFee * (float)0.98;
+
         newOrder.setOrderDate(orderDateString);
         newOrder.setDeliveryDate(deliveryDateString);
-        newOrder.setUpdatedtime(orderDateString);
-        newOrder.setTotal(orderProductInfo.getQuantity() * orderProductInfo.getUnitPrice());
-        newOrder.setShippingfee("2000");
-        newOrder.setCurrentStatus("paid");
+        newOrder.setTotal(total);
+        newOrder.getProducts().add(orderProductInfo);
+        newOrder.setCurrentStatus(currentStatus);
+        newOrder.setOrderFee(orderFee);
+        newOrder.setShippingFee(shippingFee);
+        newOrder.setShipperFee(shipperFee);
+        newOrder.setProviderFee(providerFee);
+        newOrder.setUpdateTime(orderDateString);
 
         orderRepository.save(newOrder);
         return new ResponseEntity<>(HttpStatus.OK);
