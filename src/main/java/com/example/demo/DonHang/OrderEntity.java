@@ -28,13 +28,14 @@ public class OrderEntity {
     private String deliveryDate;
     private float total;
     private List<ProductEntity> products;
-    private String currentStatus;
     private String shipper;
     private String provider;
     private float orderFee;
     private float shippingFee;
     private float shipperFee;
     private float providerFee;
-    private String status;
     private String updateTime;
+    // Thuộc tính trạng thái chỉ cần set 1 trong 2. NoSQL mà lo j
+    private String currentStatus;
+    private String status;
 }
