@@ -3,6 +3,8 @@ package com.example.demo.Statistical;
 
 import com.example.demo.Area.AreaEntity;
 import com.example.demo.Area.AreaRepository;
+import com.example.demo.Product.ProductEntity;
+import com.example.demo.Product.ProductRepository;
 import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class StatisticalController {
     @Autowired
     AreaRepository areaRepository;
 
+    @Autowired
+    ProductRepository productRepository;
+
     @GetMapping("users")
     public ResponseEntity<StatisticEntity> getdata(){
 
@@ -33,5 +38,11 @@ public class StatisticalController {
         StatisticEntity statisticEntity = new StatisticEntity(users, areas);
 
         return new ResponseEntity<StatisticEntity>(statisticEntity, HttpStatus.OK);
+    }
+
+    @GetMapping("products")
+    public ResponseEntity<List<ProductEntity>> getProducts(){
+        List<ProductEntity> products =  productRepository.findAll();
+        return new ResponseEntity<List<ProductEntity>>(products, HttpStatus.OK);
     }
 }
