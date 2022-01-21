@@ -1,9 +1,9 @@
 package com.example.demo.User;
 
-import com.example.demo.Area.AreaEntity;
 import com.example.demo.Area.AreaRepository;
 import com.example.demo.DonHang.OrderEntity;
 import com.example.demo.DonHang.OrderRepository;
+import com.example.demo.User.ImgCIEntity;
 import com.example.demo.OrderStatus.StatusHistory;
 import com.example.demo.OrderStatus.StatusRepository;
 import com.example.demo.OrderStatus.UpdateStatusInput;
@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("api/users")
 public class UserController {
     @Autowired
     UserRepository userRepository;
@@ -35,6 +36,44 @@ public class UserController {
     @Autowired
     AreaRepository areaRepository;
 
+    @GetMapping("/{role}/statusregister/{status}")
+    public ResponseEntity<?> getUserByRoleAndStatus(@PathVariable("role") String role,
+                                             @PathVariable("status") String status) {
+        List<UserEntity> users = userRepository.findUserEntitiesByRoleAndStatus(role, status);
+
+        if (users.size() > 0)
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/shipperpending")
+    public ResponseEntity<?> getShipperPending() {
+        List<UserEntity> users = userRepository.findUserEntitiesByRoleAndStatus("shipper", "pending");
+
+        if (users.size() > 0)
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/activeuser")
+    public ResponseEntity<?> activeUser(@RequestBody UserEntity shipper) {
+        try{
+            Optional<UserEntity> user = userRepository.findById(shipper.get_id());
+
+            if (user.isPresent()) {
+                user.get().setStatus("active");
+                userRepository.save(user.get());
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+            else
+                return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<?> getOrdersByUser(@PathVariable("userId") String userId) {
@@ -52,15 +91,15 @@ public class UserController {
                                            @RequestBody UpdateStatusInput status)
     {
         List<String> validStatus = Arrays.asList(
-                "comfirming",
+                "confirming",
                 "preparing",
                 "waiting-shipper",
                 "delivering",
                 "paid",
                 "canceled");
 
-        Boolean contains = validStatus.contains(status.getName());
-        if (contains == false) {
+        boolean contains = validStatus.contains(status.getName());
+        if (!contains) {
             return new ResponseEntity<String>("Invalid Status Name", HttpStatus.BAD_REQUEST);
         }
 
@@ -69,16 +108,16 @@ public class UserController {
         if (order.isPresent()) {
             OrderEntity resOrder = order.get();
             String currentStatus = resOrder.getCurrentStatus();
-            Boolean flag = false;
+            boolean flag = false;
 
             //Hủy đơn hàng
             if (Objects.equals(status.getName(), new String("canceled"))) {
                 List<String> cancelStatus = Arrays.asList(
-                        "comfirming",
+                        "confirming",
                         "preparing");
 
                 flag = cancelStatus.contains(currentStatus);
-                if (flag == true) {
+                if (flag) {
 
                     StatusHistory history = new StatusHistory();
 
@@ -90,9 +129,8 @@ public class UserController {
 
                     //Update status in order table
                     resOrder.setCurrentStatus(status.getName());
-                    orderRepository.save(resOrder);
 
-                    return new ResponseEntity<OrderEntity>(resOrder, HttpStatus.OK);
+                    return new ResponseEntity<OrderEntity>(orderRepository.save(resOrder), HttpStatus.OK);
                 } else {
                     return new ResponseEntity<String>("Can't cancel", HttpStatus.BAD_REQUEST);
                 }

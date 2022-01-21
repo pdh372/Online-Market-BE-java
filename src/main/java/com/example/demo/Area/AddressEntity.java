@@ -1,4 +1,4 @@
-package com.example.demo.Address;
+package com.example.demo.Area;
 
 import com.example.demo.Area.AreaEntity;
 import lombok.AllArgsConstructor;

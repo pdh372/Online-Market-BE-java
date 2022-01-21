@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -20,17 +22,21 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection = "orders")
 public class OrderEntity {
-    private String userId;
+    @Id
+    private String _id;
+
+    private ObjectId userId;
     private String orderDate;
     private String deliveryDate;
     private float total;
     private List<ProductEntity> products;
-    //Chờ xác nhận
-    //Chờ lấy hàng
-    //Đang giao
-    //Đã giao
-    //Đã hủy
-    private String shippingfee;
-    private String updatedtime;
     private String currentStatus;
+    private String shipper;
+    private String provider;
+    private float orderFee;
+    private float shippingFee;
+    private float shipperFee;
+    private float providerFee;
+    private String status;
+    private String updateTime;
 }

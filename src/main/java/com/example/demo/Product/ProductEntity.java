@@ -1,5 +1,7 @@
 package com.example.demo.Product;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,12 +16,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "product")
 public class ProductEntity {
     private String _id;
-    private String store;
-    private String category;
     private String name;
     private String description;
-    private Float price;
-    private String unit;
-    private Integer quantity;
     private String image;
+    private float price;
+    private String unit;
+    private String category;
+    private String store;
+    private float quality;
 }
