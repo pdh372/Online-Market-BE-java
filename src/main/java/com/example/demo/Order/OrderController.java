@@ -1,4 +1,15 @@
-//package com.example.demo.Order;
+// ĐỪNG CODE Ở ĐÂY VÔ PACKAGE ĐƠN HÀNG
+// package com.example.demo.Order;
+
+import com.example.demo.DonHang.OrderRepository;
+import com.example.demo.Product.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 //
 //import com.example.demo.Area.AreaEntity;
 //import com.example.demo.DonHang.ProductEntity;
@@ -24,6 +35,13 @@
 //    @Autowired
 //    OrderRepository orderRepository;
 //
+//    @Autowired
+//    ProductRepository productRepository;
+//
+//
+//
+//}
+
 //    @PutMapping("/commission/{orderId}")
 //    public ResponseEntity<?> Commission(@PathVariable("orderId") String orderId) {
 //        try {
