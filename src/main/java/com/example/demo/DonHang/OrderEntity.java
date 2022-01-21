@@ -1,10 +1,7 @@
 package com.example.demo.DonHang;
 
 import com.example.demo.User.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -20,6 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Document(collection = "orders")
 public class OrderEntity {
     @Id
