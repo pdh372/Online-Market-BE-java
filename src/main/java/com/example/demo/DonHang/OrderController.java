@@ -2,10 +2,13 @@ package com.example.demo.DonHang;
 import com.example.demo.Product.ProductRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -41,11 +44,7 @@ public class OrderController {
     }
 
     @PostMapping ("/add")
-    public ResponseEntity<?> addOrder(@RequestBody ProductEntity orderProductInfo) {
-
-        var newOrder = new OrderEntity();
-        newOrder.setProducts(new ArrayList<>());
-
+    public ResponseEntity addOrder(@RequestBody OrderEntity newOrder) {
         var orderDate = LocalDateTime.now();
         var deliveryDate = orderDate.plusDays(4);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
@@ -53,15 +52,15 @@ public class OrderController {
         var deliveryDateString = formatter.format(deliveryDate);
 
 
-        //Product Entity from Product package
-        var productIsExist = productRepository.existsById(orderProductInfo.getProductId());
+//        Product Entity from Product package
+        var productIsExist = productRepository.existsById(newOrder.getProducts().get(0).getProductId());
         if (!productIsExist) {
             return new ResponseEntity<>("ProductId does not exists", HttpStatus.NOT_FOUND);
         }
 
         var currentStatus = "preparing";
 
-       float orderFee = orderProductInfo.getQuantity() * orderProductInfo.getUnitPrice();
+       float orderFee = newOrder.getProducts().get(0).getQuantity() * newOrder.getProducts().get(0).getUnitPrice();
        float shippingFee = 15000;
 
        float total = orderFee + shippingFee;
@@ -72,7 +71,6 @@ public class OrderController {
         newOrder.setOrderDate(orderDateString);
         newOrder.setDeliveryDate(deliveryDateString);
         newOrder.setTotal(total);
-        newOrder.getProducts().add(orderProductInfo);
         newOrder.setCurrentStatus(currentStatus);
         newOrder.setOrderFee(orderFee);
         newOrder.setShippingFee(shippingFee);
