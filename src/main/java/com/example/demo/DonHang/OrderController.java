@@ -2,13 +2,10 @@ package com.example.demo.DonHang;
 import com.example.demo.Product.ProductRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -44,10 +41,10 @@ public class OrderController {
     }
 
     @PostMapping ("/add")
-    public ResponseEntity addOrder(@RequestBody ProductEntity orderProductInfo) {
+    public ResponseEntity<?> addOrder(@RequestBody ProductEntity orderProductInfo) {
 
         var newOrder = new OrderEntity();
-        newOrder.setProducts(new ArrayList<ProductEntity>());
+        newOrder.setProducts(new ArrayList<>());
 
         var orderDate = LocalDateTime.now();
         var deliveryDate = orderDate.plusDays(4);
@@ -110,6 +107,16 @@ public class OrderController {
             }
         }
         catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("shipper/{_id}")
+    public ResponseEntity<?> getOrders(@PathVariable("_id") String _id){
+        try {
+            List<OrderEntity> orders = orderRepository.findByShipper(_id);
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
