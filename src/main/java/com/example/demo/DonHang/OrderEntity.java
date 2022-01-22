@@ -38,5 +38,5 @@ public class OrderEntity {
     private float shipperFee;
     private float providerFee;
     private String status;
-    private String updateTime;
+    private String updatetime;
 }
