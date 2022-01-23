@@ -34,7 +34,7 @@ public class OrderEntity {
     private float shippingFee;
     private float shipperFee;
     private float providerFee;
-    private String updatedTime;
+    private String updatedtime;
     // Thuộc tính trạng thái chỉ cần set 1 trong 2. NoSQL mà lo j
     private String currentStatus;
     private String status;
