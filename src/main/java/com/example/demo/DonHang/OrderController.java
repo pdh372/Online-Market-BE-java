@@ -100,6 +100,7 @@ public class OrderController {
                 order.setTotal(order.getOrderFee() + order.getShippingFee());
                 order.setShipperFee((float) (order.getShippingFee()*0.98));
                 order.setProviderFee((float) (order.getOrderFee()*0.95));
+                orderRepository.save(order);
                 return new ResponseEntity<>(order, HttpStatus.OK);
             }
             else {
