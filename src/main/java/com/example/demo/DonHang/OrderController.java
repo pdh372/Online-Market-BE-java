@@ -76,7 +76,7 @@ public class OrderController {
         newOrder.setShippingFee(shippingFee);
         newOrder.setShipperFee(shipperFee);
         newOrder.setProviderFee(providerFee);
-        newOrder.setUpdatedTime(orderDateString);
+        newOrder.setUpdatedtime(orderDateString);
 
         orderRepository.save(newOrder);
         return new ResponseEntity<>(HttpStatus.OK);
