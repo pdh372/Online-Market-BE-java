@@ -65,7 +65,7 @@ public class UserController {
             if (user.isPresent()) {
                 user.get().setStatus("active");
                 userRepository.save(user.get());
-                return new ResponseEntity<>(user, HttpStatus.OK);
+                return new ResponseEntity<>("Actived account", HttpStatus.OK);
             }
             else
                 return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);

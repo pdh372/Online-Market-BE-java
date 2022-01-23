@@ -1,5 +1,7 @@
 package com.example.demo.DonHang;
 import com.example.demo.Product.ProductRepository;
+import com.example.demo.Product.ProductStoreRequestEntity;
+import com.example.demo.Store.StoreEntity;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -98,6 +100,7 @@ public class OrderController {
                 order.setTotal(order.getOrderFee() + order.getShippingFee());
                 order.setShipperFee((float) (order.getShippingFee()*0.98));
                 order.setProviderFee((float) (order.getOrderFee()*0.95));
+                orderRepository.save(order);
                 return new ResponseEntity<>(order, HttpStatus.OK);
             }
             else {
@@ -117,5 +120,16 @@ public class OrderController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<?> getProduct(@PathVariable("orderId") String orderId){
+        Optional<OrderEntity> order =  orderRepository.findById(orderId);
+
+        if(order.isPresent()) {
+            return new ResponseEntity<>(order, HttpStatus.OK);
+        }
+        else
+            return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
     }
 }
