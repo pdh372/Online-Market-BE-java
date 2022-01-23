@@ -18,4 +18,6 @@ public class StoreEntity {
     private String type;
     private AddressEntity address;
     private String licence;
+    private String foodSafety;
+    private String productOrigin;
 }
