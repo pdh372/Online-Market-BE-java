@@ -62,26 +62,26 @@ public class OrderController {
 
         var currentStatus = "preparing";
 
-       float orderFee = newOrder.getProducts().get(0).getQuantity() * newOrder.getProducts().get(0).getUnitPrice();
-       float shippingFee = 15000;
-
-       float total = orderFee + shippingFee;
-
-       float providerFee = orderFee * (float)0.95;
-       float shipperFee = shippingFee * (float)0.98;
+//       float orderFee = newOrder.getProducts().get(0).getQuantity() * newOrder.getProducts().get(0).getUnitPrice();
+//       float shippingFee = 15000;
+//
+//       float total = orderFee + shippingFee;
+//
+//       float providerFee = orderFee * (float)0.95;
+//       float shipperFee = shippingFee * (float)0.98;
 
         newOrder.setOrderDate(orderDateString);
         newOrder.setDeliveryDate(deliveryDateString);
-        newOrder.setTotal(total);
+//        newOrder.setTotal(total);
         newOrder.setCurrentStatus(currentStatus);
-        newOrder.setOrderFee(orderFee);
-        newOrder.setShippingFee(shippingFee);
-        newOrder.setShipperFee(shipperFee);
-        newOrder.setProviderFee(providerFee);
+//        newOrder.setOrderFee(orderFee);
+//        newOrder.setShippingFee(shippingFee);
+//        newOrder.setShipperFee(shipperFee);
+//        newOrder.setProviderFee(providerFee);
         newOrder.setUpdatedtime(orderDateString);
 
         orderRepository.save(newOrder);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(newOrder, HttpStatus.OK);
     }
 
     @PutMapping("/commission/{orderId}")
@@ -93,7 +93,7 @@ public class OrderController {
                 OrderEntity order = orders.get();
                 List<ProductEntity> products = order.getProducts();
                 order.setOrderFee(0);
-                order.setShippingFee(3000);
+                order.setShippingFee(30000);
                 for (ProductEntity product : products) {
                     order.setOrderFee(order.getOrderFee() + product.getQuantity() * product.getUnitPrice());
                 }
