@@ -21,6 +21,8 @@ import java.util.Optional;
 public class ProductController {
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
     StoreRepository storeRepository;
 
     @DeleteMapping("/{_id}")
