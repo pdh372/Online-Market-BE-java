@@ -25,4 +25,5 @@ public class ProductEntity {
     private String store;
     private float quality;
     private String productOrigin;
+    private float rating;
 }
